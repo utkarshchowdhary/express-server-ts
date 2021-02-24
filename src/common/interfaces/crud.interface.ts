@@ -1,5 +1,5 @@
 export interface CRUD {
-  list: (limit?: number, page?: number) => Promise<any>;
+  list: (page?: number, limit?: number) => Promise<any>;
   create: (resource: any) => Promise<any>;
   readById: (resourceId: any) => Promise<any>;
   putById: (resourceId: any) => Promise<any>;

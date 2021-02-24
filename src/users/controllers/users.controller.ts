@@ -20,7 +20,9 @@ class UsersController {
   }
 
   async listUsers(req: Request, res: Response) {
-    const users = await UsersService.list();
+    const page = parseInt(req.query.page as string);
+    const limit = parseInt(req.query.limit as string);
+    const users = await UsersService.list(page, limit);
     res.status(200).send(users);
   }
 

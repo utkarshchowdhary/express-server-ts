@@ -19,8 +19,28 @@ class UsersService implements CRUD {
     return UsersService.instance;
   }
 
-  async list(limit?: number, page?: number) {
-    return await UsersDao.getUsers();
+  async list(page?: number, limit?: number) {
+    const users = await UsersDao.getUsers();
+
+    if (page && page > 0) {
+      const per_page = limit || 10;
+      const offset = (page - 1) * per_page;
+
+      const paged_users = users.slice(offset).slice(0, per_page);
+      const total_pages = Math.ceil(users.length / per_page);
+
+      return {
+        page,
+        per_page,
+        pre_page: page - 1 ? page - 1 : null,
+        next_page: total_pages > page ? page + 1 : null,
+        total: users.length,
+        total_pages,
+        data: paged_users,
+      };
+    }
+
+    return users;
   }
 
   async create(resource: UserDto) {
