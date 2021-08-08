@@ -1,48 +1,45 @@
-import express from "express";
-import http from "http";
-import bodyparser from "body-parser";
-import winston from "winston";
-import expressWinston from "express-winston";
-import debug from "debug";
-import cors from "cors";
-import { CommonRoutesConfig } from "./common/common.routes.config";
-import { UsersRoutes } from "./users/users.routes.config";
+import 'source-map-support/register'
+import express from 'express'
+import winston from 'winston'
+import expressWinston from 'express-winston'
+import debug from 'debug'
+import cors from 'cors'
+import { CommonRoutesConfig } from './common/common.routes.config'
+import { UsersRoutes } from './users/users.routes.config'
 
-const app: express.Application = express();
-const server = http.createServer(app);
-const port: number = 3000;
-const routes: CommonRoutesConfig[] = [];
-const debugLog = debug("application");
+const app: express.Application = express()
 
-app.use(bodyparser.json());
+const port = 3000
 
-app.use(cors());
+const routes: Array<CommonRoutesConfig> = []
 
-app.use(
-  expressWinston.logger({
-    transports: [new winston.transports.Console()],
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.json()
-    ),
-  })
-);
+const log: debug.IDebugger = debug('app')
 
-routes.push(new UsersRoutes(app));
+app.use(express.json())
 
-app.use(
-  expressWinston.errorLogger({
-    transports: [new winston.transports.Console()],
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.json()
-    ),
-  })
-);
+app.use(cors())
 
-server.listen(port, () => {
-  debugLog(`Server running on port:${port}`);
+const loggerOptions: expressWinston.LoggerOptions = {
+  transports: [new winston.transports.Console()],
+  format: winston.format.combine(
+    winston.format.json(),
+    winston.format.prettyPrint(),
+    winston.format.colorize({ all: true })
+  )
+}
+
+if (!process.env.DEBUG) {
+  loggerOptions.meta = false // when not debugging, ignore meta data
+}
+
+// log all HTTP requests
+app.use(expressWinston.logger(loggerOptions))
+
+routes.push(new UsersRoutes(app))
+
+app.listen(port, () => {
   routes.forEach((route: CommonRoutesConfig) => {
-    debugLog(`Routes configured for ${route.getName()}`);
-  });
-});
+    log(`Routes configured for ${route.name}`)
+  })
+  console.log(`Server running at http://localhost:${port}`)
+})

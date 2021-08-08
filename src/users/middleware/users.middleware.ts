@@ -1,29 +1,29 @@
-import { Request, Response, NextFunction } from "express";
-import debug from "debug";
-import UserService from "../services/users.service";
+import { Request, Response, NextFunction } from 'express'
+import debug from 'debug'
+import UserService from '../services/users.service'
 
-const log = debug("application:users-middleware");
+const log = debug('app:users-middleware')
 
 class UsersMiddleware {
-  private static instance: UsersMiddleware;
+  private static instance: UsersMiddleware
 
   private constructor() {
-    log("Created new instance of UsersMiddleware");
+    log('Created new instance of UsersMiddleware')
   }
 
   static getInstance() {
     if (!UsersMiddleware.instance) {
-      UsersMiddleware.instance = new UsersMiddleware();
+      UsersMiddleware.instance = new UsersMiddleware()
     }
-    return UsersMiddleware.instance;
+    return UsersMiddleware.instance
   }
 
   async validateUserExists(req: Request, res: Response, next: NextFunction) {
-    const user = await UserService.readById(req.params.userId);
+    const user = await UserService.readById(req.params.userId)
     if (user) {
-      next();
+      next()
     } else {
-      res.status(404).send({ error: `User ${req.params.userId} not found` });
+      res.status(404).send({ error: `User ${req.params.userId} not found` })
     }
   }
 
@@ -33,11 +33,11 @@ class UsersMiddleware {
     next: NextFunction
   ) {
     if (req.body && req.body.email && req.body.password) {
-      next();
+      next()
     } else {
       res
         .status(400)
-        .send({ error: `Missing required fields: email and/or password` });
+        .send({ error: `Missing required fields: email and/or password` })
     }
   }
 
@@ -46,11 +46,11 @@ class UsersMiddleware {
     res: Response,
     next: NextFunction
   ) {
-    const user = await UserService.getUserByEmail(req.body.email);
+    const user = await UserService.getUserByEmail(req.body.email)
     if (user) {
-      res.status(400).send({ error: `User email already exists` });
+      res.status(400).send({ error: `User email already exists` })
     } else {
-      next();
+      next()
     }
   }
 
@@ -59,11 +59,11 @@ class UsersMiddleware {
     res: Response,
     next: NextFunction
   ) {
-    const user = await UserService.getUserByEmail(req.body.email);
+    const user = await UserService.getUserByEmail(req.body.email)
     if (user && user.id === req.params.userId) {
-      next();
+      next()
     } else {
-      res.status(400).send({ error: `Invalid email` });
+      res.status(400).send({ error: `Invalid email` })
     }
   }
 
@@ -73,11 +73,11 @@ class UsersMiddleware {
         req,
         res,
         next
-      );
+      )
     } else {
-      next();
+      next()
     }
   }
 }
 
-export default UsersMiddleware.getInstance();
+export default UsersMiddleware.getInstance()
