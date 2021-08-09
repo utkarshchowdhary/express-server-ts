@@ -1,35 +1,29 @@
 import debug from 'debug'
 import { nanoid } from 'nanoid'
-import { UserDto } from '../dto/users.model'
+import { CreateUserDto } from '../dto/create.user.dto'
+import { PatchUserDto } from '../dto/patch.user.dto'
+import { PutUserDto } from '../dto/put.user.dto'
 
-const log = debug('app:in-memory-dao')
+const log: debug.IDebugger = debug('app:in-memory-dao')
 
 class UsersDao {
-  private static instance: UsersDao
-  users: UserDto[] = []
+  users: Array<CreateUserDto> = []
 
-  private constructor() {
+  constructor() {
     log('Created new instance of UsersDao')
   }
 
-  static getInstance(): UsersDao {
-    if (!UsersDao.instance) {
-      UsersDao.instance = new UsersDao()
-    }
-    return UsersDao.instance
-  }
-
-  async addUser(user: UserDto): Promise<UserDto> {
+  async addUser(user: CreateUserDto) {
     user.id = nanoid(22)
     this.users.push(user)
     return user
   }
 
-  async getUsers(): Promise<UserDto[]> {
+  async getUsers() {
     return this.users
   }
 
-  async getUserById(userId: string): Promise<UserDto | null> {
+  async getUserById(userId: string) {
     const usr = this.users.find((usr) => usr.id === userId)
     if (usr) {
       return usr
@@ -38,7 +32,7 @@ class UsersDao {
     }
   }
 
-  async getUserByEmail(email: string): Promise<UserDto | null> {
+  async getUserByEmail(email: string) {
     const usr = this.users.find((usr) => usr.email === email)
     if (usr) {
       return usr
@@ -47,14 +41,14 @@ class UsersDao {
     }
   }
 
-  async putUserById(user: UserDto): Promise<UserDto> {
-    const usrIndex = this.users.findIndex((usr) => usr.id === user.id)
+  async putUserById(userId: string, user: PutUserDto) {
+    const usrIndex = this.users.findIndex((usr) => usr.id === userId)
     this.users.splice(usrIndex, 1, user)
     return user
   }
 
-  async patchUserById(user: UserDto): Promise<UserDto> {
-    const usrIndex = this.users.findIndex((usr) => usr.id === user.id)
+  async patchUserById(userId: string, user: PatchUserDto) {
+    const usrIndex = this.users.findIndex((usr) => usr.id === userId)
     const usr = this.users[usrIndex]
     const allowedPatchFields = [
       'password',
@@ -62,17 +56,19 @@ class UsersDao {
       'lastName',
       'permissionLevel'
     ]
+
     for (let field of allowedPatchFields) {
       if (field in user) {
         // @ts-ignore
         usr[field] = user[field]
       }
     }
+
     this.users.splice(usrIndex, 1, usr)
     return usr
   }
 
-  async removeUserById(userId: string): Promise<UserDto> {
+  async removeUserById(userId: string) {
     const usrIndex = this.users.findIndex((usr) => usr.id === userId)
     const usr = this.users[usrIndex]
     this.users.splice(usrIndex, 1)
@@ -80,4 +76,4 @@ class UsersDao {
   }
 }
 
-export default UsersDao.getInstance()
+export default new UsersDao() // using singleton pattern this will always provide the same instance

@@ -1,28 +1,21 @@
 import debug from 'debug'
 import UsersDao from '../daos/users.dao'
 import { CRUD } from '../../common/interfaces/crud.interface'
-import { UserDto } from '../dto/users.model'
+import { CreateUserDto } from '../dto/create.user.dto'
+import { PutUserDto } from '../dto/put.user.dto'
+import { PatchUserDto } from '../dto/patch.user.dto'
 
-const log = debug('app:users-service')
+const log: debug.IDebugger = debug('app:users-service')
 
 class UsersService implements CRUD {
-  private static instance: UsersService
-
-  private constructor() {
+  constructor() {
     log('Created new instance of UsersService')
   }
 
-  static getInstance(): UsersService {
-    if (!UsersService.instance) {
-      UsersService.instance = new UsersService()
-    }
-    return UsersService.instance
-  }
-
-  async list(page?: number, limit?: number) {
+  async list(limit?: number, page?: number) {
     const users = await UsersDao.getUsers()
 
-    if (page && page > 0) {
+    if (page) {
       const per_page = limit || 10
       const offset = (page - 1) * per_page
 
@@ -43,29 +36,29 @@ class UsersService implements CRUD {
     return users
   }
 
-  async create(resource: UserDto) {
+  async create(resource: CreateUserDto) {
     return await UsersDao.addUser(resource)
   }
 
-  async readById(resourceId: string) {
-    return await UsersDao.getUserById(resourceId)
+  async readById(id: string) {
+    return await UsersDao.getUserById(id)
   }
 
   async getUserByEmail(email: string) {
     return UsersDao.getUserByEmail(email)
   }
 
-  async putById(resource: UserDto) {
-    return await UsersDao.putUserById(resource)
+  async putById(id: string, resource: PutUserDto) {
+    return await UsersDao.putUserById(id, resource)
   }
 
-  async patchById(resource: UserDto) {
-    return await UsersDao.patchUserById(resource)
+  async patchById(id: string, resource: PatchUserDto) {
+    return await UsersDao.patchUserById(id, resource)
   }
 
-  async deleteById(resourceId: string) {
-    return await UsersDao.removeUserById(resourceId)
+  async deleteById(id: string) {
+    return await UsersDao.removeUserById(id)
   }
 }
 
-export default UsersService.getInstance()
+export default new UsersService()

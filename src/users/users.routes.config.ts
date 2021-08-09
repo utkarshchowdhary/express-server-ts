@@ -10,7 +10,7 @@ export class UsersRoutes extends CommonRoutesConfig {
 
   configureRoutes(): void {
     this.app
-      .route(`/users`)
+      .route('/users')
       .get(UsersController.listUsers)
       .post(
         UsersMiddleware.validateRequiredUserBodyFields,
@@ -18,8 +18,10 @@ export class UsersRoutes extends CommonRoutesConfig {
         UsersController.createUser
       )
 
+    this.app.param('userId', UsersMiddleware.extractUserId)
+
     this.app
-      .route(`/users/:userId`)
+      .route('/users/:userId')
       .all(UsersMiddleware.validateUserExists)
       .get(UsersController.getUserById)
       .put(

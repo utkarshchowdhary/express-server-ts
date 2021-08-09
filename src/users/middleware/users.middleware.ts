@@ -2,20 +2,16 @@ import { Request, Response, NextFunction } from 'express'
 import debug from 'debug'
 import UserService from '../services/users.service'
 
-const log = debug('app:users-middleware')
+const log: debug.IDebugger = debug('app:users-middleware')
 
 class UsersMiddleware {
-  private static instance: UsersMiddleware
-
-  private constructor() {
+  constructor() {
     log('Created new instance of UsersMiddleware')
   }
 
-  static getInstance() {
-    if (!UsersMiddleware.instance) {
-      UsersMiddleware.instance = new UsersMiddleware()
-    }
-    return UsersMiddleware.instance
+  async extractUserId(req: Request, res: Response, next: NextFunction) {
+    req.body.id = req.params.userId
+    next()
   }
 
   async validateUserExists(req: Request, res: Response, next: NextFunction) {
@@ -32,12 +28,12 @@ class UsersMiddleware {
     res: Response,
     next: NextFunction
   ) {
-    if (req.body && req.body.email && req.body.password) {
+    if (req.body.email && req.body.password) {
       next()
     } else {
       res
         .status(400)
-        .send({ error: `Missing required fields: email and/or password` })
+        .send({ error: `Missing required fields email and password` })
     }
   }
 
@@ -48,7 +44,7 @@ class UsersMiddleware {
   ) {
     const user = await UserService.getUserByEmail(req.body.email)
     if (user) {
-      res.status(400).send({ error: `User email already exists` })
+      res.status(400).send({ error: 'User email already exists' })
     } else {
       next()
     }
@@ -63,21 +59,21 @@ class UsersMiddleware {
     if (user && user.id === req.params.userId) {
       next()
     } else {
-      res.status(400).send({ error: `Invalid email` })
+      res.status(400).send({ error: 'Invalid email' })
     }
   }
 
-  async validatePatchEmail(req: Request, res: Response, next: NextFunction) {
+  validatePatchEmail = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     if (req.body.email) {
-      UsersMiddleware.getInstance().validateSameEmailBelongToSameUser(
-        req,
-        res,
-        next
-      )
+      this.validateSameEmailBelongToSameUser(req, res, next)
     } else {
       next()
     }
   }
 }
 
-export default UsersMiddleware.getInstance()
+export default new UsersMiddleware()
