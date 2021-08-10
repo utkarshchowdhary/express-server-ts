@@ -33,7 +33,7 @@ class UsersMiddleware {
     } else {
       res
         .status(400)
-        .send({ error: `Missing required fields email and password` })
+        .send({ error: 'Missing required fields email and/or password' })
     }
   }
 
@@ -60,18 +60,6 @@ class UsersMiddleware {
       next()
     } else {
       res.status(400).send({ error: 'Invalid email' })
-    }
-  }
-
-  validatePatchEmail = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    if (req.body.email) {
-      this.validateSameEmailBelongToSameUser(req, res, next)
-    } else {
-      next()
     }
   }
 }

@@ -38,6 +38,7 @@ class UsersController {
   }
 
   async put(req: Request, res: Response) {
+    // email should be same as previous resource
     req.body.password = await bcrypt.hash(req.body.password, 10)
     const user = await UsersService.putById(req.body.id, req.body)
     res.status(200).send(user)
