@@ -29,7 +29,7 @@ const loggerOptions: expressWinston.LoggerOptions = {
 }
 
 if (!process.env.DEBUG) {
-  loggerOptions.meta = false // when not debugging, ignore meta data
+  loggerOptions.meta = false // when not debugging, ignore metadata
 }
 
 // log all HTTP requests
