@@ -1,5 +1,5 @@
 import debug from 'debug'
-import UsersDao from '../daos/users.dao'
+import UsersDao from '../dao/users.dao'
 import { CRUD } from '../../common/interfaces/crud.interface'
 import { CreateUserDto } from '../dto/create.user.dto'
 import { PutUserDto } from '../dto/put.user.dto'
