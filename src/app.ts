@@ -1,5 +1,5 @@
 import 'source-map-support/register'
-import express from 'express'
+import express, { Application } from 'express'
 import winston from 'winston'
 import expressWinston from 'express-winston'
 import debug from 'debug'
@@ -7,13 +7,13 @@ import cors from 'cors'
 import { CommonRoutesConfig } from './common/common.routes.config'
 import { UsersRoutes } from './users/users.routes.config'
 
-const app: express.Application = express()
+const app: Application = express()
 
 const port = 3000
 
 const routes: Array<CommonRoutesConfig> = []
 
-const log: debug.IDebugger = debug('app')
+const log = debug('app')
 
 app.use(express.json())
 

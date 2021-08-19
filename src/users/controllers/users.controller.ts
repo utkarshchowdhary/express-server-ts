@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs'
 
 import UsersService from '../services/users.service'
 
-const log: debug.IDebugger = debug('app:users-controller')
+const log = debug('app:users-controller')
 
 class UsersController {
   constructor() {

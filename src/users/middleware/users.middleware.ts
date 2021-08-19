@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import debug from 'debug'
 import UserService from '../services/users.service'
 
-const log: debug.IDebugger = debug('app:users-middleware')
+const log = debug('app:users-middleware')
 
 class UsersMiddleware {
   constructor() {

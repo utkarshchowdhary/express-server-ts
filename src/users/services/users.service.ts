@@ -5,7 +5,7 @@ import { CreateUserDto } from '../dto/create.user.dto'
 import { PutUserDto } from '../dto/put.user.dto'
 import { PatchUserDto } from '../dto/patch.user.dto'
 
-const log: debug.IDebugger = debug('app:users-service')
+const log = debug('app:users-service')
 
 class UsersService implements CRUD {
   constructor() {

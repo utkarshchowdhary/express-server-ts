@@ -4,7 +4,7 @@ import { CreateUserDto } from '../dto/create.user.dto'
 import { PatchUserDto } from '../dto/patch.user.dto'
 import { PutUserDto } from '../dto/put.user.dto'
 
-const log: debug.IDebugger = debug('app:in-memory-dao')
+const log = debug('app:in-memory-dao')
 
 class UsersDao {
   users: Array<CreateUserDto> = []
