@@ -13,9 +13,8 @@ class UsersDao {
     log('Created new instance of UsersDao')
   }
 
-  async addUser(user: CreateUserDto) {
-    user.id = nanoid(22)
-    this.users.push(user)
+  async addUser(user: Omit<CreateUserDto, 'id'>) {
+    this.users.push({ ...user, id: nanoid(22) })
     return user
   }
 
