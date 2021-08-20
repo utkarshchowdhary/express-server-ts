@@ -1,9 +1,7 @@
 import debug from 'debug'
 import UsersDao from '../dao/users.dao'
 import { CRUD } from '../../common/interfaces/crud.interface'
-import { CreateUserDto } from '../dto/create.user.dto'
-import { PutUserDto } from '../dto/put.user.dto'
-import { PatchUserDto } from '../dto/patch.user.dto'
+import { UserDto, PatchableUserDto } from '../dto/user.dto'
 
 const log = debug('app:users-service')
 
@@ -36,7 +34,7 @@ class UsersService implements CRUD {
     return users
   }
 
-  async create(resource: CreateUserDto) {
+  async create(resource: UserDto) {
     return await UsersDao.addUser(resource)
   }
 
@@ -48,11 +46,11 @@ class UsersService implements CRUD {
     return UsersDao.getUserByEmail(email)
   }
 
-  async putById(id: string, resource: PutUserDto) {
+  async putById(id: string, resource: UserDto) {
     return await UsersDao.putUserById(id, resource)
   }
 
-  async patchById(id: string, resource: PatchUserDto) {
+  async patchById(id: string, resource: PatchableUserDto) {
     return await UsersDao.patchUserById(id, resource)
   }
 

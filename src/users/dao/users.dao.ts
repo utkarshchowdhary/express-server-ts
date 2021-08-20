@@ -1,20 +1,18 @@
 import debug from 'debug'
 import { nanoid } from 'nanoid'
-import { CreateUserDto } from '../dto/create.user.dto'
-import { PatchUserDto } from '../dto/patch.user.dto'
-import { PutUserDto } from '../dto/put.user.dto'
+import { UserDto, PatchableUserDto } from '../dto/user.dto'
 
 const log = debug('app:in-memory-dao')
 
 class UsersDao {
-  users: Array<CreateUserDto> = []
+  users: Array<UserDto> = []
 
   constructor() {
     log('Created new instance of UsersDao')
   }
 
-  async addUser(user: Omit<CreateUserDto, 'id'>) {
-    const usr: CreateUserDto = { ...user, id: nanoid(22) }
+  async addUser(user: Omit<UserDto, 'id'>) {
+    const usr: UserDto = { ...user, id: nanoid(22) }
     this.users.push(usr)
     return usr
   }
@@ -41,16 +39,16 @@ class UsersDao {
     }
   }
 
-  async putUserById(userId: string, user: PutUserDto) {
+  async putUserById(userId: string, user: UserDto) {
     const usrIndex = this.users.findIndex((usr) => usr.id === userId)
     this.users.splice(usrIndex, 1, user)
     return user
   }
 
-  async patchUserById(userId: string, user: PatchUserDto) {
+  async patchUserById(userId: string, user: PatchableUserDto) {
     const usrIndex = this.users.findIndex((usr) => usr.id === userId)
     const usr = this.users[usrIndex]
-    const allowedPatchFields = [
+    const allowedPatchFields: Array<keyof PatchableUserDto> = [
       'password',
       'firstName',
       'lastName',
