@@ -14,8 +14,9 @@ class UsersDao {
   }
 
   async addUser(user: Omit<CreateUserDto, 'id'>) {
-    this.users.push({ ...user, id: nanoid(22) })
-    return user
+    const usr: CreateUserDto = { ...user, id: nanoid(22) }
+    this.users.push(usr)
+    return usr
   }
 
   async getUsers() {
