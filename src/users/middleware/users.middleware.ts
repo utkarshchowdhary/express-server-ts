@@ -55,11 +55,16 @@ class UsersMiddleware {
     res: Response,
     next: NextFunction
   ) {
-    const user = await UserService.getUserByEmail(req.body.email)
-    if (user && user.id === req.params.userId) {
-      next()
+    if (req.body.email) {
+      // email should be same as previous resource
+      const user = await UserService.getUserByEmail(req.body.email)
+      if (user && user._id.toString() === req.params.userId) {
+        next()
+      } else {
+        res.status(400).send({ error: 'Invalid email' })
+      }
     } else {
-      res.status(400).send({ error: 'Invalid email' })
+      next()
     }
   }
 }

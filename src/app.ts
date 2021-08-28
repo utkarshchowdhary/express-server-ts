@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import 'source-map-support/register'
 import express, { Application } from 'express'
 import winston from 'winston'

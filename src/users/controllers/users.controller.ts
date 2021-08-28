@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import debug from 'debug'
 import bcrypt from 'bcryptjs'
-
 import UsersService from '../services/users.service'
 
 const log = debug('app:users-controller')
@@ -12,9 +11,7 @@ class UsersController {
   }
 
   async listUsers(req: Request, res: Response) {
-    const limit = Number(req.query.limit)
-    const page = Number(req.query.page)
-    const users = await UsersService.list(limit, page)
+    const users = await UsersService.list()
     res.status(200).send(users)
   }
 
@@ -38,15 +35,14 @@ class UsersController {
   }
 
   async put(req: Request, res: Response) {
-    // email should be same as previous resource
     req.body.password = await bcrypt.hash(req.body.password, 10)
     const user = await UsersService.putById(req.body.id, req.body)
     res.status(200).send(user)
   }
 
   async removeUser(req: Request, res: Response) {
-    const user = await UsersService.deleteById(req.body.id)
-    res.status(204).send(user)
+    await UsersService.deleteById(req.body.id)
+    res.status(204).send()
   }
 }
 

@@ -1,11 +1,11 @@
 export interface UserDto {
-  id: string
   email: string
   password: string
   firstName?: string
   lastName?: string
-  permissionLevel?: number
+  permissionFlags?: number
 }
 
-export interface PatchableUserDto
-  extends Partial<Omit<UserDto, 'id' | 'email'>> {}
+export interface PatchableUserDto extends Partial<UserDto> {}
+
+export interface PutableUserDto extends Required<UserDto> {}

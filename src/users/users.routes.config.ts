@@ -29,7 +29,10 @@ export class UsersRoutes extends CommonRoutesConfig {
         UsersMiddleware.validateSameEmailBelongToSameUser,
         UsersController.put
       )
-      .patch(UsersController.patch)
+      .patch(
+        UsersMiddleware.validateSameEmailBelongToSameUser,
+        UsersController.patch
+      )
       .delete(UsersController.removeUser)
   }
 }

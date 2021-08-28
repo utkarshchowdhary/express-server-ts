@@ -1,76 +1,67 @@
 import debug from 'debug'
-import { nanoid } from 'nanoid'
-import { UserDto, PatchableUserDto } from '../dto/user.dto'
+import MongooseService from '../../common/services/mongoose.service'
+import { UserDto, PatchableUserDto, PutableUserDto } from '../dto/user.dto'
 
 const log = debug('app:in-memory-dao')
 
 class UsersDao {
-  users: Array<UserDto> = []
+  Schema = MongooseService.getMongoose().Schema
+
+  userSchema = new this.Schema(
+    {
+      email: String,
+      password: { type: String, select: false },
+      firstName: String,
+      lastName: String,
+      permissionFlags: Number
+    },
+    { id: false }
+  )
+
+  User = MongooseService.getMongoose().model('Users', this.userSchema)
 
   constructor() {
     log('Created new instance of UsersDao')
   }
 
-  async addUser(user: Omit<UserDto, 'id'>) {
-    const usr: UserDto = { ...user, id: nanoid(22) }
-    this.users.push(usr)
-    return usr
-  }
-
-  async getUsers() {
-    return this.users
-  }
-
-  async getUserById(userId: string) {
-    const usr = this.users.find((usr) => usr.id === userId)
-    if (usr) {
-      return usr
-    } else {
-      return null
-    }
-  }
-
-  async getUserByEmail(email: string) {
-    const usr = this.users.find((usr) => usr.email === email)
-    if (usr) {
-      return usr
-    } else {
-      return null
-    }
-  }
-
-  async putUserById(userId: string, user: UserDto) {
-    const usrIndex = this.users.findIndex((usr) => usr.id === userId)
-    this.users.splice(usrIndex, 1, user)
+  async addUser(userFields: UserDto) {
+    const user = new this.User({
+      ...userFields,
+      permissionFlags: 1 // override permissionFlags with the value 1
+    })
+    await user.save()
     return user
   }
 
-  async patchUserById(userId: string, user: PatchableUserDto) {
-    const usrIndex = this.users.findIndex((usr) => usr.id === userId)
-    const usr = this.users[usrIndex]
-    const allowedPatchFields: Array<keyof PatchableUserDto> = [
-      'password',
-      'firstName',
-      'lastName',
-      'permissionLevel'
-    ]
+  async getUsers(limit = 25, page = 1) {
+    const offset = (page - 1) * limit
 
-    for (let field of allowedPatchFields) {
-      if (field in user) {
-        // @ts-ignore
-        usr[field] = user[field]
-      }
-    }
+    return this.User.find().skip(offset).limit(limit).exec()
+  }
 
-    this.users.splice(usrIndex, 1, usr)
-    return usr
+  async getUserById(userId: string) {
+    return this.User.findOne({ _id: userId }).exec()
+  }
+
+  async getUserByEmail(email: string) {
+    return this.User.findOne({ email: email }).exec()
+  }
+
+  async updateUserById(
+    userId: string,
+    userFields: PatchableUserDto | PutableUserDto
+  ) {
+    const existingUser = await this.User.findOneAndUpdate(
+      { _id: userId },
+      { $set: userFields },
+      { new: true }
+    ).exec()
+
+    return existingUser
   }
 
   async removeUserById(userId: string) {
-    const usrIndex = this.users.findIndex((usr) => usr.id === userId)
-    const usr = this.users[usrIndex]
-    this.users.splice(usrIndex, 1)
-    return usr
+    return this.User.deleteOne({ _id: userId }).exec()
   }
 }
 
