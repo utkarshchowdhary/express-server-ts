@@ -24,43 +24,40 @@ class UsersDao {
     log('Created new instance of UsersDao')
   }
 
-  async addUser(userFields: UserDto) {
+  addUser(userFields: UserDto) {
     const user = new this.User({
       ...userFields,
       permissionFlags: 1 // override permissionFlags with the value 1
     })
-    await user.save()
-    return user
+    return user.save()
   }
 
-  async getUsers(limit = 25, page = 1) {
+  getUsers(limit = 25, page = 1) {
     const offset = (page - 1) * limit
 
     return this.User.find().skip(offset).limit(limit).exec()
   }
 
-  async getUserById(userId: string) {
+  getUserById(userId: string) {
     return this.User.findOne({ _id: userId }).exec()
   }
 
-  async getUserByEmail(email: string) {
+  getUserByEmail(email: string) {
     return this.User.findOne({ email: email }).exec()
   }
 
-  async updateUserById(
+  updateUserById(
     userId: string,
     userFields: PatchableUserDto | PutableUserDto
   ) {
-    const existingUser = await this.User.findOneAndUpdate(
+    return this.User.findOneAndUpdate(
       { _id: userId },
       { $set: userFields },
       { new: true }
     ).exec()
-
-    return existingUser
   }
 
-  async removeUserById(userId: string) {
+  removeUserById(userId: string) {
     return this.User.deleteOne({ _id: userId }).exec()
   }
 }

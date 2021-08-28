@@ -9,31 +9,17 @@ class UsersMiddleware {
     log('Created new instance of UsersMiddleware')
   }
 
-  async extractUserId(req: Request, res: Response, next: NextFunction) {
+  extractUserId(req: Request, res: Response, next: NextFunction) {
     req.body.id = req.params.userId
     next()
   }
 
   async validateUserExists(req: Request, res: Response, next: NextFunction) {
-    const user = await UserService.readById(req.params.userId)
+    const user = await UserService.readById(req.body.id)
     if (user) {
       next()
     } else {
-      res.status(404).send({ error: `User ${req.params.userId} not found` })
-    }
-  }
-
-  async validateRequiredUserBodyFields(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    if (req.body.email && req.body.password) {
-      next()
-    } else {
-      res
-        .status(400)
-        .send({ error: 'Missing required fields email and/or password' })
+      res.status(404).send({ error: `User ${req.body.id} not found` })
     }
   }
 
@@ -58,7 +44,7 @@ class UsersMiddleware {
     if (req.body.email) {
       // email should be same as previous resource
       const user = await UserService.getUserByEmail(req.body.email)
-      if (user && user._id.toString() === req.params.userId) {
+      if (user && user._id.toString() === req.body.id) {
         next()
       } else {
         res.status(400).send({ error: 'Invalid email' })
