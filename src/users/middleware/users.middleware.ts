@@ -17,6 +17,7 @@ class UsersMiddleware {
   async validateUserExists(req: Request, res: Response, next: NextFunction) {
     const user = await usersService.readById(req.body.id)
     if (user) {
+      res.locals.user = user
       next()
     } else {
       res.status(404).send({ errors: [`User ${req.body.id} not found`] })
@@ -49,6 +50,17 @@ class UsersMiddleware {
       } else {
         res.status(400).send({ errors: ['Invalid email'] })
       }
+    } else {
+      next()
+    }
+  }
+
+  userCantChangePermission(req: Request, res: Response, next: NextFunction) {
+    if (
+      'permissionFlags' in req.body &&
+      req.body.permissionFlags !== res.locals.user.permissionFlags
+    ) {
+      res.status(400).send({ errors: ['Cannot change permission flags'] })
     } else {
       next()
     }

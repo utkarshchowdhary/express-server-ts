@@ -2,6 +2,7 @@ import debug from 'debug'
 import mongooseService from '../../common/services/mongoose.service'
 import { UserModel } from '../models/user.model'
 import { UserDto, PatchableUserDto, PutableUserDto } from '../dto/user.dto'
+import { PermissionFlag } from '../../common/enums/permissionflag.enum'
 
 const log = debug('app:in-memory-dao')
 
@@ -40,7 +41,7 @@ class UsersDao {
   addUser(userFields: UserDto) {
     const user = new this.User({
       ...userFields,
-      permissionFlags: 1 // override permissionFlags with the value 1
+      permissionFlags: PermissionFlag.FREE_PERMISSION
     })
     return user.save()
   }
