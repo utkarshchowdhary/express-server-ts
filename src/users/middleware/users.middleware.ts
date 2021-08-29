@@ -56,6 +56,7 @@ class UsersMiddleware {
   }
 
   userCantChangePermission(req: Request, res: Response, next: NextFunction) {
+    // permissionFlags should be same as previous resource
     if (
       'permissionFlags' in req.body &&
       req.body.permissionFlags !== res.locals.user.permissionFlags

@@ -3,6 +3,7 @@ export interface UserDto {
   password: string
   firstName?: string
   lastName?: string
+  permissionFlags?: number
 }
 
 export interface PatchableUserDto extends Partial<UserDto> {}

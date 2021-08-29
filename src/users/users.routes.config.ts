@@ -52,6 +52,7 @@ export class UsersRoutes extends CommonRoutesConfig {
           .withMessage('Must include password (5+ characters)'),
         body('firstName').isString(),
         body('lastName').isString(),
+        body('permissionFlags').isInt(),
         bodyValidationMiddleware.verifyBodyFieldsErrors,
         usersMiddleware.validateSameEmailBelongToSameUser,
         usersMiddleware.userCantChangePermission,
@@ -66,6 +67,7 @@ export class UsersRoutes extends CommonRoutesConfig {
           .optional(),
         body('firstName').isString().optional(),
         body('lastName').isString().optional(),
+        body('permissionFlags').isInt().optional(),
         usersMiddleware.validateSameEmailBelongToSameUser,
         usersMiddleware.userCantChangePermission,
         usersController.patch
