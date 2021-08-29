@@ -3,6 +3,8 @@ import debug from 'debug'
 
 const log = debug('app:mongoose-service')
 
+const database = process.env.DATABASE!
+
 class MongooseService {
   private count = 0
 
@@ -18,7 +20,7 @@ class MongooseService {
     log('Attempting MongoDB connection (will retry if needed)')
 
     mongoose
-      .connect(process.env.DATABASE!)
+      .connect(database)
       .then(() => {
         log('MongoDB is connected')
       })

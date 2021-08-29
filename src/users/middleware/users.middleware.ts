@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import debug from 'debug'
-import UserService from '../services/users.service'
+import usersService from '../services/users.service'
 
 const log = debug('app:users-middleware')
 
@@ -15,11 +15,11 @@ class UsersMiddleware {
   }
 
   async validateUserExists(req: Request, res: Response, next: NextFunction) {
-    const user = await UserService.readById(req.body.id)
+    const user = await usersService.readById(req.body.id)
     if (user) {
       next()
     } else {
-      res.status(404).send({ error: `User ${req.body.id} not found` })
+      res.status(404).send({ errors: [`User ${req.body.id} not found`] })
     }
   }
 
@@ -28,9 +28,9 @@ class UsersMiddleware {
     res: Response,
     next: NextFunction
   ) {
-    const user = await UserService.getUserByEmail(req.body.email)
+    const user = await usersService.getUserByEmail(req.body.email)
     if (user) {
-      res.status(400).send({ error: 'User email already exists' })
+      res.status(400).send({ errors: ['User email already exists'] })
     } else {
       next()
     }
@@ -43,11 +43,11 @@ class UsersMiddleware {
   ) {
     if (req.body.email) {
       // email should be same as previous resource
-      const user = await UserService.getUserByEmail(req.body.email)
-      if (user && user._id.toString() === req.body.id) {
+      const user = await usersService.getUserByEmail(req.body.email)
+      if (user && user.id === req.body.id) {
         next()
       } else {
-        res.status(400).send({ error: 'Invalid email' })
+        res.status(400).send({ errors: ['Invalid email'] })
       }
     } else {
       next()

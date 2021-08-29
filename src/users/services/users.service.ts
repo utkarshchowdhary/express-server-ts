@@ -1,5 +1,5 @@
 import debug from 'debug'
-import UsersDao from '../dao/users.dao'
+import usersDao from '../dao/users.dao'
 import { CRUD } from '../../common/interfaces/crud.interface'
 import { UserDto, PatchableUserDto, PutableUserDto } from '../dto/user.dto'
 
@@ -11,31 +11,35 @@ class UsersService implements CRUD {
   }
 
   list(limit?: number, page?: number) {
-    return UsersDao.getUsers(limit, page)
+    return usersDao.getUsers(limit, page)
   }
 
   create(resource: UserDto) {
-    return UsersDao.addUser(resource)
+    return usersDao.addUser(resource)
   }
 
   readById(id: string) {
-    return UsersDao.getUserById(id)
+    return usersDao.getUserById(id)
   }
 
   getUserByEmail(email: string) {
-    return UsersDao.getUserByEmail(email)
+    return usersDao.getUserByEmail(email)
+  }
+
+  getUserByEmailWithPassword(email: string) {
+    return usersDao.getUserByEmailWithPassword(email)
   }
 
   patchById(id: string, resource: PatchableUserDto) {
-    return UsersDao.updateUserById(id, resource)
+    return usersDao.updateUserById(id, resource)
   }
 
   putById(id: string, resource: PutableUserDto) {
-    return UsersDao.updateUserById(id, resource)
+    return usersDao.updateUserById(id, resource)
   }
 
   deleteById(id: string) {
-    return UsersDao.removeUserById(id)
+    return usersDao.removeUserById(id)
   }
 }
 

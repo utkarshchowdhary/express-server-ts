@@ -7,6 +7,7 @@ import debug from 'debug'
 import cors from 'cors'
 import { CommonRoutesConfig } from './common/common.routes.config'
 import { UsersRoutes } from './users/users.routes.config'
+import { AuthRoutes } from './auth/auth.routes.config'
 
 const app: Application = express()
 
@@ -37,6 +38,7 @@ if (!process.env.DEBUG) {
 app.use(expressWinston.logger(loggerOptions))
 
 routes.push(new UsersRoutes(app))
+routes.push(new AuthRoutes(app))
 
 app.listen(port, () => {
   routes.forEach((route: CommonRoutesConfig) => {

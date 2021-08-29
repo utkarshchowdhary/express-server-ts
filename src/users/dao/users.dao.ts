@@ -1,11 +1,12 @@
 import debug from 'debug'
-import MongooseService from '../../common/services/mongoose.service'
+import mongooseService from '../../common/services/mongoose.service'
+import { UserModel } from '../models/user.model'
 import { UserDto, PatchableUserDto, PutableUserDto } from '../dto/user.dto'
 
 const log = debug('app:in-memory-dao')
 
 class UsersDao {
-  Schema = MongooseService.getMongoose().Schema
+  Schema = mongooseService.getMongoose().Schema
 
   userSchema = new this.Schema(
     {
@@ -15,10 +16,22 @@ class UsersDao {
       lastName: String,
       permissionFlags: Number
     },
-    { id: false }
+    {
+      timestamps: true,
+      toJSON: {
+        versionKey: false,
+        virtuals: true,
+        transform(doc, ret) {
+          delete ret._id
+        }
+      },
+      toObject: { versionKey: false, virtuals: true }
+    }
   )
 
-  User = MongooseService.getMongoose().model('Users', this.userSchema)
+  User = mongooseService
+    .getMongoose()
+    .model<UserModel>('Users', this.userSchema)
 
   constructor() {
     log('Created new instance of UsersDao')
@@ -44,6 +57,10 @@ class UsersDao {
 
   getUserByEmail(email: string) {
     return this.User.findOne({ email: email }).exec()
+  }
+
+  getUserByEmailWithPassword(email: string) {
+    return this.User.findOne({ email: email }).select('+password').exec()
   }
 
   updateUserById(

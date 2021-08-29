@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import debug from 'debug'
 import bcrypt from 'bcryptjs'
-import UsersService from '../services/users.service'
+import usersService from '../services/users.service'
 
 const log = debug('app:users-controller')
 
@@ -11,18 +11,18 @@ class UsersController {
   }
 
   async listUsers(req: Request, res: Response) {
-    const users = await UsersService.list()
+    const users = await usersService.list()
     res.status(200).send(users)
   }
 
   async createUser(req: Request, res: Response) {
     req.body.password = await bcrypt.hash(req.body.password, 10)
-    const user = await UsersService.create(req.body)
+    const user = await usersService.create(req.body)
     res.status(201).send(user)
   }
 
   async getUserById(req: Request, res: Response) {
-    const user = await UsersService.readById(req.body.id)
+    const user = await usersService.readById(req.body.id)
     res.status(200).send(user)
   }
 
@@ -30,18 +30,18 @@ class UsersController {
     if (req.body.password) {
       req.body.password = await bcrypt.hash(req.body.password, 10)
     }
-    const user = await UsersService.patchById(req.body.id, req.body)
+    const user = await usersService.patchById(req.body.id, req.body)
     res.status(200).send(user)
   }
 
   async put(req: Request, res: Response) {
     req.body.password = await bcrypt.hash(req.body.password, 10)
-    const user = await UsersService.putById(req.body.id, req.body)
+    const user = await usersService.putById(req.body.id, req.body)
     res.status(200).send(user)
   }
 
   async removeUser(req: Request, res: Response) {
-    await UsersService.deleteById(req.body.id)
+    await usersService.deleteById(req.body.id)
     res.status(204).send()
   }
 }
