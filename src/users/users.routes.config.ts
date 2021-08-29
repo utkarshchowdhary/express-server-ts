@@ -39,9 +39,9 @@ export class UsersRoutes extends CommonRoutesConfig {
     this.app
       .route('/users/:userId')
       .all(
-        usersMiddleware.validateUserExists,
         jwtMiddleware.validJWTNeeded,
-        permissionMiddleware.onlySameUserOrAdminCanDoThisAction
+        permissionMiddleware.onlySameUserOrAdminCanDoThisAction,
+        usersMiddleware.validateUserExists
       )
       .get(usersController.getUserById)
       .put(
