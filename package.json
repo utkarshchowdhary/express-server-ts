@@ -20,7 +20,7 @@
     "express-validator": "^6.12.1",
     "express-winston": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.0.2",
+    "mongoose": "^6.11.3",
     "source-map-support": "^0.5.19",
     "winston": "^3.3.3"
   },
